@@ -1,7 +1,9 @@
 package com.loading.neo4j.service;
 
 import com.loading.neo4j.dao.PersonDao;
+import com.loading.neo4j.dao.TrustRelationDao;
 import com.loading.neo4j.entity.Person;
+import com.loading.neo4j.entity.TrustRelation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,9 @@ import java.util.List;
 //@Rollback(true)
 public class GraphServiceTest {
 
-//    @Autowired
-//    private GraphService graphService;
+    @Autowired
+    private TrustRelationDao trustRelationDao;
 
-//    @Autowired
-//    private CompanyDao companyDao;
 
     @Autowired
     private PersonDao personDao;
@@ -42,8 +42,9 @@ public class GraphServiceTest {
     private final static Logger log = LoggerFactory.getLogger(GraphServiceTest.class);
 
     @Test
-    public  void savePeople() {
+    public void savePeople() {
         personDao.deleteAll();
+        trustRelationDao.deleteAll();
 
         Person greg = new Person("Greg");
         Person roy = new Person("Roy");
@@ -53,27 +54,37 @@ public class GraphServiceTest {
 
         log.info("Before linking up with Neo4j...");
 
-        team.stream().forEach(person -> log.info("\t" + person.toString()));
 
         personDao.save(greg);
         personDao.save(roy);
         personDao.save(craig);
 
-        greg = personDao.findByName(greg.getName());
-        greg.trust(roy);
-        greg.trust(craig);
-        personDao.save(greg);
+//        greg = personDao.findByName(greg.getName());
+//        greg.trust(roy, 2, 0.4);
+//        greg.trust(craig, 3, 0.5);
+//        personDao.save(greg);
+//
+//        roy = personDao.findByName(roy.getName());
+//        roy.trust(craig, 2, 0.9);
+//        // We already know that roy works with greg
+//        personDao.save(roy);
+//
+//        // We already know craig works with roy and greg
 
-        roy = personDao.findByName(roy.getName());
-        roy.trust(craig);
-        // We already know that roy works with greg
-        personDao.save(roy);
+        TrustRelation trustRelation1 = new TrustRelation(greg, roy, 1, 0.5);
+        TrustRelation trustRelation2 = new TrustRelation(greg, roy, 2, 0.2);
+        TrustRelation trustRelation3 = new TrustRelation(greg, roy, 5, 0.3);
+        TrustRelation trustRelation4 = new TrustRelation(roy, greg, 2, 0.3);
+        TrustRelation trustRelation5 = new TrustRelation(greg, craig, 4, 0.5);
+        TrustRelation trustRelation6 = new TrustRelation(craig, roy, 3, 0.2);
+        trustRelationDao.save(trustRelation1);
+        trustRelationDao.save(trustRelation2);
+        trustRelationDao.save(trustRelation3);
+        trustRelationDao.save(trustRelation4);
+        trustRelationDao.save(trustRelation5);
+        trustRelationDao.save(trustRelation6);
 
-        // We already know craig works with roy and greg
 
-        log.info("Lookup each person by name...");
-        team.stream().forEach(person -> log.info(
-                "\t" + personDao.findByName(person.getName()).toString()));
     }
 
 

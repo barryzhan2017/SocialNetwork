@@ -1,28 +1,19 @@
 package com.loading.neo4j.entity;
 
-import com.loading.neo4j.entity.Basic.BasicNodeInterface;
-import com.loading.neo4j.entity.Basic.InvestNode;
+import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.springframework.data.annotation.Id;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
-/**
- * desc:
- * Created on 2017/10/10.
- *
- * @author Lo_ading
- * @version 1.0.0
- * @since 1.0.0
- */
 @NodeEntity
-public class Person extends InvestNode implements BasicNodeInterface{
+public class Person {
+
+    @GraphId
+    private Long id;
 
     private int age;
 
@@ -41,6 +32,14 @@ public class Person extends InvestNode implements BasicNodeInterface{
 
     public int getAge() {
         return age;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setAge(int age) {
@@ -63,11 +62,11 @@ public class Person extends InvestNode implements BasicNodeInterface{
         this.name = name;
     }
 
-    public void trust(Person person) {
+    public void trust(Person person, int trustIndex, double probability) {
         if (trustedPeople == null) {
             trustedPeople = new HashSet<>();
         }
-        TrustRelation trustRelation = new TrustRelation(this, person);
+        TrustRelation trustRelation = new TrustRelation(this, person, trustIndex, probability);
         trustedPeople.add(trustRelation);
     }
 

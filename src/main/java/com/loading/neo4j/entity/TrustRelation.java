@@ -1,7 +1,5 @@
 package com.loading.neo4j.entity;
 
-
-import com.loading.neo4j.entity.Basic.BasicNode;
 import org.neo4j.ogm.annotation.*;
 
 import java.util.Date;
@@ -14,10 +12,10 @@ public class TrustRelation  {
     private Long id;
 
     @StartNode
-    private BasicNode source;
+    private Person source;
 
     @EndNode
-    private BasicNode target;
+    private Person target;
 
     @Property
     private String relationName = "trust";
@@ -55,9 +53,12 @@ public class TrustRelation  {
 
     }
 
-    public TrustRelation(BasicNode source, BasicNode target) {
+    public TrustRelation(Person source, Person target, int trustIndex
+    , double probability) {
         this.source = source;
         this.target = target;
+        this.trustIndex = trustIndex;
+        this.probability = probability;
     }
 
 
@@ -71,22 +72,22 @@ public class TrustRelation  {
     }
 
 
-    public BasicNode getSource() {
+    public Person getSource() {
         return source;
     }
 
 
-    public void setSource(BasicNode source) {
+    public void setSource(Person source) {
         this.source = source;
     }
 
 
-    public BasicNode getTarget() {
+    public Person getTarget() {
         return target;
     }
 
 
-    public void setTarget(BasicNode target) {
+    public void setTarget(Person target) {
         this.target = target;
     }
 
