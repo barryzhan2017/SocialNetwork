@@ -1,6 +1,5 @@
 package com.loading.neo4j.dao;
 
-import com.loading.neo4j.entity.Company;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 
 /**

@@ -1,6 +1,5 @@
 package com.loading.neo4j.entity.Basic;
 
-import com.loading.neo4j.entity.InvestRelation;
 import org.neo4j.ogm.annotation.*;
 
 import java.util.Date;

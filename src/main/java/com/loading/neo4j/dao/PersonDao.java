@@ -12,4 +12,5 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
  * @since 1.0.0
  */
 public interface PersonDao extends Neo4jRepository<Person, Long> {
+    Person findByName(String name);
 }
