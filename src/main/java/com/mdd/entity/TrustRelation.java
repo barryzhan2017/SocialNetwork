@@ -1,4 +1,4 @@
-package com.loading.neo4j.entity;
+package com.mdd.entity;
 
 import org.neo4j.ogm.annotation.*;
 

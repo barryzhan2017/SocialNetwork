@@ -1,14 +1,12 @@
-package com.loading.neo4j;
+package com.mdd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {
-		"com.loading.neo4j.dao.impl",
-		"com.loading.neo4j.service",
-})
+@EntityScan("com.mdd.entity")
 public class Neo4jDemoApplication {
 
 	public static void main(String[] args) {
