@@ -1,7 +1,7 @@
 # SocialNetwork using neo4j
 neo4j + springboot -> social network
 
-Building multi-valued decision diagram from social network to evaluating the trust score from some one to the other.
+Building multi-valued decision diagram from social network to evaluate the trust score from some one to the other.
 
 Developing...
 
