@@ -16,7 +16,7 @@ public class Person {
 
     private int age;
 
-    @Relationship(type = "Trust", direction = Relationship.UNDIRECTED)
+    @Relationship(type = "Trust", direction = Relationship.DIRECTION)
     private Set<TrustRelation> trustedPeople;
 
     private String name;

@@ -16,98 +16,112 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 import java.util.Map;
 
+import static com.mdd.common.CommonConstant.NO_ORDERED;
 import static org.junit.Assert.assertEquals;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+
 public class MDDCreationTest {
 
-    @Autowired
-    private TrustRelationDao trustRelationDao;
+    private int indexOfGrey = 0;
+    private int indexOfRoy = 1;
+    private int indexOfCraig = 2;
+    private int indexOfMike = 3;
+    private int numberOfPeople = 4;
+    private int numberOfRelationship = 6;
+    private MDDCreation mddCreation;
 
-
-    @Autowired
-    private PersonDao personDao;
-
-
+    //Initialize the 3 layer trust level social network graph.
     @Before
-    public void addPeopleAndRelationshipToDB() {
-
-        Person greg = new Person("Greg");
-        Person roy = new Person("Roy");
-        Person craig = new Person("Craig");
-
-        personDao.save(greg);
-        personDao.save(roy);
-        personDao.save(craig);
-
-        TrustRelation trustRelation1 = new TrustRelation(greg, roy, 1, 0.5);
-        TrustRelation trustRelation2 = new TrustRelation(greg, roy, 2, 0.2);
-        TrustRelation trustRelation3 = new TrustRelation(greg, roy, 0, 0.3);
-        TrustRelation trustRelation4 = new TrustRelation(roy, greg, 2, 0.3);
-        TrustRelation trustRelation5 = new TrustRelation(greg, craig, 1, 0.5);
-        TrustRelation trustRelation6 = new TrustRelation(greg, craig, 0, 0.2);
-
-        trustRelationDao.save(trustRelation1);
-        trustRelationDao.save(trustRelation2);
-        trustRelationDao.save(trustRelation3);
-        trustRelationDao.save(trustRelation4);
-        trustRelationDao.save(trustRelation5);
-        trustRelationDao.save(trustRelation6);
-    }
-
-    @After
-    public void removeAllFromDB() {
-        personDao.deleteAll();
-        trustRelationDao.deleteAll();
-    }
-
-    @Test
-    public void shouldSocialNetworkGraphBeCreatedSuccessfullyFromDB() {
-        MDDCreation mddCreation = new MDDCreation(CommonTestConstant.NUMBER_OF_TRUST_LEVEL);
-        Relationship[][] socialNetworkGraph = mddCreation.getSocialNetworkGraph();
-        Map<Long, Integer> personIdToGraphIndex = mddCreation.getPersonIdToGraphIndex();
-        assertEquals(3, socialNetworkGraph[0].length);
-        assertEquals(3, personIdToGraphIndex.size());
-        Person greg = ((List<Person>)personDao.findPeopleByName("Greg")).get(0);
-        Person roy = ((List<Person>)personDao.findPeopleByName("Roy")).get(0);
-        Person craig = ((List<Person>)personDao.findPeopleByName("Craig")).get(0);
-
-        Relationship relationshipFromGreyToRoy = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL);
+    public void initializeMDDCreation() {
+        Relationship[][] socialNetworkGraph = new Relationship[4][4];
+        Relationship relationshipFromGreyToRoy = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfGrey, indexOfRoy);
         relationshipFromGreyToRoy.setTrustProbability(0.3, 0);
         relationshipFromGreyToRoy.setTrustProbability(0.5, 1);
         relationshipFromGreyToRoy.setTrustProbability(0.2, 2);
 
-        Relationship relationshipFromRoyToGrey = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL);
+        Relationship relationshipFromRoyToGrey = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfRoy, indexOfGrey);
         relationshipFromRoyToGrey.setTrustProbability(0, 0);
         relationshipFromRoyToGrey.setTrustProbability(0, 1);
-        relationshipFromRoyToGrey.setTrustProbability(0.3, 2);
+        relationshipFromRoyToGrey.setTrustProbability(1, 2);
 
-        Relationship relationshipFromGreyToCraig = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL);
+        Relationship relationshipFromGreyToCraig = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfGrey, indexOfCraig);
         relationshipFromGreyToCraig.setTrustProbability(0.2, 0);
-        relationshipFromGreyToCraig.setTrustProbability(0.5, 1);
+        relationshipFromGreyToCraig.setTrustProbability(0.8, 1);
         relationshipFromGreyToCraig.setTrustProbability(0, 2);
 
-        Relationship relationshipFromCraigToRoy = null;
+        Relationship relationshipFromCraigToRoy = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfCraig, indexOfRoy);
+        relationshipFromCraigToRoy.setTrustProbability(0.2, 0);
+        relationshipFromCraigToRoy.setTrustProbability(0.6, 1);
+        relationshipFromCraigToRoy.setTrustProbability(0.2, 2);
 
-        Relationship relationshipFromCraigToGrey = null;
+        Relationship relationshipFromCraigToMike = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfCraig, indexOfMike);
+        relationshipFromCraigToMike.setTrustProbability(0.6, 0);
+        relationshipFromCraigToMike.setTrustProbability(0.2, 1);
+        relationshipFromCraigToMike.setTrustProbability(0.2, 2);
 
-        Relationship relationshipFromRoyToCraig = null;
+        Relationship relationshipFromRoyToMike = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfRoy, indexOfMike);
+        relationshipFromRoyToMike.setTrustProbability(0.1, 0);
+        relationshipFromRoyToMike.setTrustProbability(0.8, 1);
+        relationshipFromRoyToMike.setTrustProbability(0.1, 2);
 
-        int indexOfRoy = personIdToGraphIndex.get(roy.getId());
-        int indexOfGrey = personIdToGraphIndex.get(greg.getId());
-        int indexOfCraig = personIdToGraphIndex.get(craig.getId());
+        Relationship relationshipFromMikeToRoy = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfMike, indexOfRoy);
+        relationshipFromMikeToRoy.setTrustProbability(0.1, 0);
+        relationshipFromMikeToRoy.setTrustProbability(0.8, 1);
+        relationshipFromMikeToRoy.setTrustProbability(0.1, 2);
 
-        assertEquals(null, socialNetworkGraph[indexOfRoy][indexOfRoy]);
-        assertEquals(null, socialNetworkGraph[indexOfCraig][indexOfCraig]);
-        assertEquals(null, socialNetworkGraph[indexOfGrey][indexOfGrey]);
-        assertEquals(relationshipFromCraigToGrey, socialNetworkGraph[indexOfCraig][indexOfGrey]);
-        assertEquals(relationshipFromRoyToCraig, socialNetworkGraph[indexOfRoy][indexOfCraig]);
-        assertEquals(relationshipFromRoyToGrey, socialNetworkGraph[indexOfRoy][indexOfGrey]);
-        assertEquals(relationshipFromGreyToRoy, socialNetworkGraph[indexOfGrey][indexOfRoy]);
-        assertEquals(relationshipFromGreyToCraig, socialNetworkGraph[indexOfGrey][indexOfCraig]);
-        assertEquals(relationshipFromCraigToRoy, socialNetworkGraph[indexOfCraig][indexOfRoy]);
+        socialNetworkGraph[indexOfRoy][indexOfRoy]= null;
+        socialNetworkGraph[indexOfCraig][indexOfCraig]= null;
+        socialNetworkGraph[indexOfGrey][indexOfGrey]= null;
+        socialNetworkGraph[indexOfMike][indexOfMike]= null;
+        socialNetworkGraph[indexOfMike][indexOfCraig]= null;
+        socialNetworkGraph[indexOfMike][indexOfGrey]= null;
+        socialNetworkGraph[indexOfGrey][indexOfMike]= null;
+        socialNetworkGraph[indexOfCraig][indexOfGrey]= null;
+        socialNetworkGraph[indexOfRoy][indexOfCraig]= null;
+
+        socialNetworkGraph[indexOfMike][indexOfRoy]= relationshipFromMikeToRoy;
+        socialNetworkGraph[indexOfRoy][indexOfGrey] = relationshipFromRoyToGrey;
+        socialNetworkGraph[indexOfGrey][indexOfRoy] = relationshipFromGreyToRoy;
+        socialNetworkGraph[indexOfGrey][indexOfCraig] = relationshipFromGreyToCraig;
+        socialNetworkGraph[indexOfCraig][indexOfRoy] = relationshipFromCraigToRoy;
+        socialNetworkGraph[indexOfCraig][indexOfMike] = relationshipFromCraigToMike;
+        socialNetworkGraph[indexOfRoy][indexOfMike] = relationshipFromRoyToMike;
+
+        mddCreation = new MDDCreation(socialNetworkGraph);
+    }
+
+
+    //Construct the order from the source node Grey to Mike. The path should be build from smaller index
+    //There should be 3 paths (Grey--Roy--Mike, Grey--Craig--Roy--Mike, Grey--Craig--Mike)
+    @Test
+    public void shouldOrderOfMDDBeSetCorrectlyWhenFindingPathFromRoyToCraig() {
+        mddCreation.orderRelationship(indexOfGrey, indexOfMike);
+        Relationship[][] relationships = mddCreation.getSocialNetworkGraph();
+
+        assertEquals(NO_ORDERED, relationships[indexOfMike][indexOfRoy].getOrder());
+        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfGrey].getOrder());
+        assertEquals(1, relationships[indexOfGrey][indexOfRoy].getOrder());
+        assertEquals(3, relationships[indexOfGrey][indexOfCraig].getOrder());
+        assertEquals(4, relationships[indexOfCraig][indexOfRoy].getOrder());
+        assertEquals(5, relationships[indexOfCraig][indexOfMike].getOrder());
+        assertEquals(2, relationships[indexOfRoy][indexOfMike].getOrder());
+    }
+
+    //Construct the order from the source node Grey to Roy. The path should be build from smaller index
+    //It should avoid path with loop. There should be 3 paths (Grey--Roy, Grey--Craig--Roy, Grey--Craig--Mike--roy)
+    @Test
+    public void shouldOrderOfMDDBeSetCorrectlyWhenFindingPathFromGreyToRoy() {
+        mddCreation.orderRelationship(indexOfGrey, indexOfRoy);
+        Relationship[][] relationships = mddCreation.getSocialNetworkGraph();
+
+        assertEquals(5, relationships[indexOfMike][indexOfRoy].getOrder());
+        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfGrey].getOrder());
+        assertEquals(1, relationships[indexOfGrey][indexOfRoy].getOrder());
+        assertEquals(2, relationships[indexOfGrey][indexOfCraig].getOrder());
+        assertEquals(3, relationships[indexOfCraig][indexOfRoy].getOrder());
+        assertEquals(4, relationships[indexOfCraig][indexOfMike].getOrder());
+        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfMike].getOrder());
     }
 
 }
