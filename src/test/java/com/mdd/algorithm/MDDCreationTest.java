@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.mdd.common.CommonConstant.NO_ORDERED;
+import static com.mdd.common.CommonTestConstant.checkParents;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertNull;
 
 
 public class MDDCreationTest {
@@ -27,8 +27,6 @@ public class MDDCreationTest {
     private int indexOfRoy = 1;
     private int indexOfCraig = 2;
     private int indexOfMike = 3;
-    private int numberOfPeople = 4;
-    private int numberOfRelationship = 6;
     private MDDCreation mddCreation;
 
     //Initialize the 3 layer trust level social network graph.
@@ -123,6 +121,135 @@ public class MDDCreationTest {
         assertEquals(4, relationships[indexOfCraig][indexOfMike].getOrder());
         assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfMike].getOrder());
     }
+
+    //To create a mdd from path from gery to roy at level 1.
+    //Check if the path is correct.
+    @Test
+    public void shouldMDDCreatedCorrectlyForOneNodePathAtTrustLevel1() {
+        List<List<Relationship>> paths = mddCreation.orderRelationship(indexOfGrey, indexOfRoy);
+        List<Relationship> pathFromGreyToRoy = paths.get(0);
+        MDD mdd = mddCreation.createMDDForPathAtSomeTrustLevel(pathFromGreyToRoy, 1);
+        RelationshipNode rootNode = mdd.getRootNode();
+        assertEquals(pathFromGreyToRoy.get(0), rootNode.getRelationship());
+        assertEquals(new RelationshipNode(0), rootNode.getNextNode(0));
+        assertEquals(new RelationshipNode(1), rootNode.getNextNode(1));
+        assertEquals(new RelationshipNode(0), rootNode.getNextNode(2));
+        checkParents(rootNode, 3);
+    }
+
+    //To create a mdd from path from gery to roy to mike at level 0.
+    //Check if the path is correct.
+    @Test
+    public void shouldMDDCreatedCorrectlyForPath0AtTrustLevel0() {
+        List<List<Relationship>> paths = mddCreation.orderRelationship(indexOfGrey, indexOfMike);
+        List<Relationship> pathFromGreyToRoyToMike = paths.get(0);
+        MDD mdd = mddCreation.createMDDForPathAtSomeTrustLevel(pathFromGreyToRoyToMike, 0);
+        RelationshipNode rootNode = mdd.getRootNode();
+        assertEquals(pathFromGreyToRoyToMike.get(0), rootNode.getRelationship());
+        RelationshipNode relationshipNode1 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNode1.putNextNode(0, new RelationshipNode(1));
+        relationshipNode1.putNextNode(1, new RelationshipNode(1));
+        relationshipNode1.putNextNode(2, new RelationshipNode(1));
+        RelationshipNode relationshipNode2 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNode2.putNextNode(0, new RelationshipNode(1));
+        relationshipNode2.putNextNode(1, new RelationshipNode(0));
+        relationshipNode2.putNextNode(2, new RelationshipNode(0));
+        assertEquals(relationshipNode1, rootNode.getNextNode(0));
+        assertEquals(relationshipNode2, rootNode.getNextNode(1));
+        assertEquals(relationshipNode2, rootNode.getNextNode(2));
+        checkParents(rootNode, 3);
+    }
+
+    //To create a mdd from path from gery to roy to mike at level 1.
+    //Check if the path is correct.
+    @Test
+    public void shouldMDDCreatedCorrectlyForPath0AtTrustLevel1() {
+        List<List<Relationship>> paths = mddCreation.orderRelationship(indexOfGrey, indexOfMike);
+        List<Relationship> pathFromGreyToRoyToMike = paths.get(0);
+        MDD mdd = mddCreation.createMDDForPathAtSomeTrustLevel(pathFromGreyToRoyToMike, 1);
+        RelationshipNode rootNode = mdd.getRootNode();
+        assertEquals(pathFromGreyToRoyToMike.get(0), rootNode.getRelationship());
+        RelationshipNode relationshipNode1 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNode1.putNextNode(0, new RelationshipNode(0));
+        relationshipNode1.putNextNode(1, new RelationshipNode(1));
+        relationshipNode1.putNextNode(2, new RelationshipNode(1));
+        RelationshipNode relationshipNode2 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNode2.putNextNode(0, new RelationshipNode(0));
+        relationshipNode2.putNextNode(1, new RelationshipNode(1));
+        relationshipNode2.putNextNode(2, new RelationshipNode(0));
+        assertEquals(new RelationshipNode(0), rootNode.getNextNode(0));
+        assertEquals(relationshipNode1, rootNode.getNextNode(1));
+        assertEquals(relationshipNode2, rootNode.getNextNode(2));
+        checkParents(rootNode, 3);
+    }
+
+    //To create a mdd from path from gery to roy to mike at level 2.
+    //Check if the path is correct.
+    @Test
+    public void shouldMDDCreatedCorrectlyForPath0AtTrustLevel2() {
+        List<List<Relationship>> paths = mddCreation.orderRelationship(indexOfGrey, indexOfMike);
+        List<Relationship> pathFromGreyToRoyToMike = paths.get(0);
+        MDD mdd = mddCreation.createMDDForPathAtSomeTrustLevel(pathFromGreyToRoyToMike, 2);
+        RelationshipNode rootNode = mdd.getRootNode();
+        assertEquals(pathFromGreyToRoyToMike.get(0), rootNode.getRelationship());
+        RelationshipNode relationshipNode1 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNode1.putNextNode(0, new RelationshipNode(0));
+        relationshipNode1.putNextNode(1, new RelationshipNode(0));
+        relationshipNode1.putNextNode(2, new RelationshipNode(1));
+        assertEquals(new RelationshipNode(0), rootNode.getNextNode(0));
+        assertEquals(new RelationshipNode(0), rootNode.getNextNode(1));
+        assertEquals(relationshipNode1, rootNode.getNextNode(2));
+        checkParents(rootNode, 3);
+    }
+
+    //To create a mdd from path from gery to craig to roy to mike at level 0.
+    //Check if the path is correct.
+    @Test
+    public void shouldMDDCreatedCorrectlyForPath1AtTrustLevel0() {
+        List<List<Relationship>> paths = mddCreation.orderRelationship(indexOfGrey, indexOfMike);
+        List<Relationship> pathFromGreyToRoyToMike = paths.get(1);
+        MDD mdd = mddCreation.createMDDForPathAtSomeTrustLevel(pathFromGreyToRoyToMike, 0);
+        RelationshipNode rootNode = mdd.getRootNode();
+        assertEquals(pathFromGreyToRoyToMike.get(2), rootNode.getRelationship());
+        RelationshipNode relationshipNodeFor1 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNodeFor1.putNextNode(0, new RelationshipNode(1));
+        relationshipNodeFor1.putNextNode(1, new RelationshipNode(1));
+        relationshipNodeFor1.putNextNode(2, new RelationshipNode(1));
+        RelationshipNode relationshipNode1 = new RelationshipNode(pathFromGreyToRoyToMike.get(0));
+        relationshipNode1.putNextNode(0, relationshipNodeFor1);
+        relationshipNode1.putNextNode(1, relationshipNodeFor1);
+        relationshipNode1.putNextNode(2, relationshipNodeFor1);
+        RelationshipNode relationshipNodeFor2 = new RelationshipNode(pathFromGreyToRoyToMike.get(1));
+        relationshipNodeFor2.putNextNode(0, new RelationshipNode(1));
+        relationshipNodeFor2.putNextNode(1, new RelationshipNode(0));
+        relationshipNodeFor2.putNextNode(2, new RelationshipNode(0));
+        RelationshipNode relationshipNode2 = new RelationshipNode(pathFromGreyToRoyToMike.get(0));
+        relationshipNode2.putNextNode(0, relationshipNodeFor1);
+        relationshipNode2.putNextNode(1, relationshipNodeFor2);
+        relationshipNode2.putNextNode(2, relationshipNodeFor2);
+        assertEquals(relationshipNode1, rootNode.getNextNode(0));
+        assertEquals(relationshipNode2, rootNode.getNextNode(1));
+        assertEquals(relationshipNode2, rootNode.getNextNode(2));
+        checkParents(rootNode, 3);
+    }
+
+    @Test
+    public void shouldMDDCreatedAsNullWhenThePathIsNull() {
+        assertNull(mddCreation.createMDDForPathAtSomeTrustLevel(null, 0));
+    }
+
+    @Test
+    public void shouldMDDCreatedAsNullWhenThePathIsEmpty() {
+        assertNull(mddCreation.createMDDForPathAtSomeTrustLevel(new ArrayList<>(), 0));
+    }
+
+    @Test
+    public void shouldCreateMDDForCraigToMikeAtTrustLevel1Correctly() {
+        MDD mdd = mddCreation.createMDD(indexOfCraig, indexOfMike, 1);
+
+    }
+
+
 
 }
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import static com.mdd.common.CommonConstant.NO_ORDERED;
 
-public class Relationship {
+public class Relationship implements Cloneable{
 
     private int numberOfTrustLevel;
     private double[] trustProbability;
@@ -35,6 +35,17 @@ public class Relationship {
         this.trustProbability = trustProbability;
         this.startNode = startNode;
         this.endNode = endNode;
+        if (trustProbability.length != numberOfTrustLevel) {
+            throw new IllegalArgumentException("Number of trust probability is not the same as the number of trust level!");
+        }
+    }
+
+    Relationship(Relationship relationship) {
+        this.numberOfTrustLevel = relationship.numberOfTrustLevel;
+        this.trustProbability = Arrays.copyOf(relationship.trustProbability, numberOfTrustLevel);
+        this.startNode = relationship.startNode;
+        this.endNode = relationship.endNode;
+        this.order = relationship.order;
     }
 
     public int getOrder() {
@@ -47,6 +58,14 @@ public class Relationship {
 
     public void setTrustProbability(double probability, int indexOfTrustLevel) {
         trustProbability[indexOfTrustLevel] = probability;
+    }
+
+    public double[] getTrustProbability() {
+        return trustProbability;
+    }
+
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
     }
 
     @Override
@@ -63,7 +82,6 @@ public class Relationship {
 
     @Override
     public int hashCode() {
-
         int result = Objects.hash(numberOfTrustLevel, startNode, endNode, order);
         result = 31 * result + Arrays.hashCode(trustProbability);
         return result;
