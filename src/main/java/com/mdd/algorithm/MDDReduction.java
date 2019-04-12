@@ -112,9 +112,6 @@ public class MDDReduction {
             relationshipNodeInEachOrder.get(order - 1).add(rootNode);
             //Compare order to check if it has moved to the next order
             for (int i = 0; i < this.numberOfTrustLevel; i++) {
-                if (rootNode.getNextNode(i) == null) {
-                    System.out.println("");
-                }
                 queue.offer(rootNode.getNextNode(i));
             }
             levelOrderTraversal(queue, relationshipNodeInEachOrder, sinkNode0, sinkNode1);

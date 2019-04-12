@@ -123,6 +123,7 @@ public class MDDCreation {
      * Create MDD from source person to sink person at given trust level
      * Iterate all the paths combination that corresponds the demand of constructing the mdd
      * and apply or operation to the combination to get the result.
+     * Use reduction algorithm to reduce the surplus nodes of the result.
      * @param paths All of the possible paths from source person to the sink one
      * @param trustLevel The trust level we need to make sure the mdd at
      * @return  MDD at the trust level
@@ -131,9 +132,12 @@ public class MDDCreation {
         MDD mddAtTrustLevel = null;
         int size = paths.size();
         for (int i = 0; i < size; i++) {
+            //Avoid MDD20, MDD30 to be applied or operation with mdd at trust level
+            if (i >= 1 && trustLevel == 0) break;
             MDD mddWhenThisPathAtTrustLevel = createMDDForPathAtSomeTrustLevel(paths.get(i), trustLevel);
             for (int j = 0; j < size; j++) {
-                if (j == i || (j < i && trustLevel == 0)) {
+                //avoid trustLevel - 1 becomes out of index bound
+                if (j == i) {
                     continue;
                 }
                 MDD mddForThisPath;
@@ -158,6 +162,8 @@ public class MDDCreation {
                 mddAtTrustLevel.or(mddWhenThisPathAtTrustLevel);
             }
         }
+        MDDReduction mddReduction = new MDDReduction(numberOfTrustLevel);
+        mddReduction.reduce(mddAtTrustLevel);
         return mddAtTrustLevel;
     }
 
@@ -293,7 +299,6 @@ public class MDDCreation {
             paths.add(orderedQueue);
             return;
         }
-
         for (int i = 0; i < sizeOfPeople; i++) {
             Relationship adjacentRelationship = socialNetworkGraph[sourceNode][i];
             if (adjacentRelationship != null && !isVisited[i]) {

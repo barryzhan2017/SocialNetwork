@@ -1,6 +1,8 @@
 package com.mdd.common;
 
 import com.mdd.algorithm.RelationshipNode;
+
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class CommonTestConstant {
@@ -10,7 +12,7 @@ public class CommonTestConstant {
         for (int i = 0; i < numberOfTrustLevel; i++) {
             RelationshipNode childNode = parentNode.getNextNode(i);
             if (childNode != null) {
-                assertTrue(parentNode == childNode.getParent());
+                assertSame(parentNode, childNode.getParent());
                 checkParents(childNode, numberOfTrustLevel);
             }
         }
