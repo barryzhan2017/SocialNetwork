@@ -1,16 +1,15 @@
 package com.mdd.algorithm;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 import static com.mdd.common.CommonConstant.NO_ORDERED;
 
 public class Relationship implements Cloneable{
-
+    
     private int numberOfTrustLevel;
     private double[] trustProbability;
-    private int startNode;
-    private int endNode;
+    private long startNode;
+    private long endNode;
     private int order = NO_ORDERED;
 
     /**
@@ -20,7 +19,7 @@ public class Relationship implements Cloneable{
      * @param startNode Index of the source person
      * @param endNode Index of the target person
      */
-    Relationship(int numberOfTrustLevel, int startNode, int endNode) {
+    Relationship(int numberOfTrustLevel, long startNode, long endNode) {
         this.numberOfTrustLevel = numberOfTrustLevel;
         trustProbability = new double[numberOfTrustLevel];
         for (int i = 0; i < numberOfTrustLevel; i++) {
@@ -28,9 +27,11 @@ public class Relationship implements Cloneable{
         }
         this.startNode = startNode;
         this.endNode = endNode;
+        int [] a = new int[1];
+        Arrays.asList(a);
     }
 
-    Relationship(int numberOfTrustLevel, int startNode, int endNode, double[] trustProbability) {
+    Relationship(int numberOfTrustLevel, long startNode, long endNode, double[] trustProbability) {
         this.numberOfTrustLevel = numberOfTrustLevel;
         this.trustProbability = trustProbability;
         this.startNode = startNode;
@@ -38,6 +39,13 @@ public class Relationship implements Cloneable{
         if (trustProbability.length != numberOfTrustLevel) {
             throw new IllegalArgumentException("Number of trust probability is not the same as the number of trust level!");
         }
+    }
+
+    Relationship(long startNode, long endNode, double[] trustProbability) {
+        this.numberOfTrustLevel = trustProbability.length;
+        this.trustProbability = trustProbability;
+        this.startNode = startNode;
+        this.endNode = endNode;
     }
 
     Relationship(Relationship relationship) {
@@ -60,12 +68,42 @@ public class Relationship implements Cloneable{
         trustProbability[indexOfTrustLevel] = probability;
     }
 
+    public void setTrustProbability(double[] trustProbability) {
+        this.trustProbability = trustProbability;
+    }
+
+    public double getTrustProbability(int i) {
+        if (i >= numberOfTrustLevel || i < 0)
+            throw new IndexOutOfBoundsException("Index is not within the number of trust level");
+        return trustProbability[i];
+    }
+
     public double[] getTrustProbability() {
         return trustProbability;
     }
 
+    public int getNumberOfTrustLevel() {
+        return numberOfTrustLevel;
+    }
+
     public Object clone() throws CloneNotSupportedException{
         return super.clone();
+    }
+
+    public long getStartNode() {
+        return startNode;
+    }
+
+    public void setStartNode(long startNode) {
+        this.startNode = startNode;
+    }
+
+    public long getEndNode() {
+        return endNode;
+    }
+
+    public void setEndNode(long endNode) {
+        this.endNode = endNode;
     }
 
     @Override
@@ -84,6 +122,6 @@ public class Relationship implements Cloneable{
     public int hashCode() {
         int result = Objects.hash(numberOfTrustLevel, startNode, endNode, order);
         result = 31 * result + Arrays.hashCode(trustProbability);
-        return result;
+            return result;
     }
 }

@@ -1,18 +1,18 @@
 package com.mdd.algorithm;
 
 import com.rits.cloning.Cloner;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.mdd.common.CommonConstant.NO_SUCH_CHILD_NODE;
+import static com.mdd.common.CommonConstant.NONE_SINK_NODE;
+
 
 public class RelationshipNode{
 
     private HashMap<Integer, RelationshipNode> trustLevelToNextNode = null;
     //The value for the sink node, which should be 1 or 0
-    private int value = -1;
+    private int value = NONE_SINK_NODE;
     private Relationship relationship = null;
     private RelationshipNode parent = null;
 
@@ -42,16 +42,16 @@ public class RelationshipNode{
         return parent;
     }
 
-    public void setParent(RelationshipNode parent) {
+    void setParent(RelationshipNode parent) {
         this.parent = parent;
     }
 
 
     /**
      * Get the index of the current node pointed from the parent
-     * @return The number of trust level or -1 for not finding this child condition.
+     * @return The number of trust level or throw exception for not finding this child condition.
      */
-    public int getTrustLevelFromParentToThis() {
+    int getTrustLevelFromParentToThis() {
         if (getParent() == null) throw new NullPointerException("Parent Node is null!");
         for (Map.Entry<Integer, RelationshipNode> entry : getParent().getTrustLevelToNextNode().entrySet()) {
             if (entry.getValue() == this) return entry.getKey();
@@ -71,7 +71,7 @@ public class RelationshipNode{
             relationshipNode.setRelationship(new Relationship(getRelationship()));
         }
         Cloner cloner = new Cloner();
-        cloner.setDumpClonedClasses(true);
+        cloner.setDumpClonedClasses(false);
         HashMap<Integer, RelationshipNode> newTrustLevelToNextNode
                 = (HashMap<Integer, RelationshipNode>)cloner.deepClone(getTrustLevelToNextNode());
         relationshipNode.setTrustLevelToNextNode(newTrustLevelToNextNode);
@@ -104,7 +104,7 @@ public class RelationshipNode{
      * @return True if the node is the last one, false if not.
      */
     private boolean isLast() {
-        return value != -1;
+        return value != NONE_SINK_NODE;
     }
 
     /**
@@ -112,13 +112,11 @@ public class RelationshipNode{
      * @param trustLevel State of the current node to go
      * @param nextRelationshipNode The next node when choosing the state
      */
-    public void putNextNode(int trustLevel, RelationshipNode nextRelationshipNode) {
-        if (trustLevelToNextNode != null) {
+    void putNextNode(int trustLevel, RelationshipNode nextRelationshipNode) {
+        if (trustLevelToNextNode != null)
             trustLevelToNextNode.put(trustLevel, nextRelationshipNode);
-        }
-        else {
+        else
             throw new NullPointerException("Map for trustLevelToNextNode is null!");
-        }
     }
 
     /**
@@ -126,7 +124,7 @@ public class RelationshipNode{
      * @param trustLevel State of the node to go
      * @param newRelationshipNode The new relationship node to be placed at the trust level
      */
-    public void replaceNextNode(int trustLevel, RelationshipNode newRelationshipNode) {
+    void replaceNextNode(int trustLevel, RelationshipNode newRelationshipNode) {
         if (trustLevelToNextNode != null && trustLevelToNextNode.containsKey(trustLevel)) {
             trustLevelToNextNode.replace(trustLevel, newRelationshipNode);
         }
@@ -135,7 +133,7 @@ public class RelationshipNode{
         }
     }
 
-    int getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -200,16 +198,16 @@ public class RelationshipNode{
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextThisNode =  nextRootNode.getTrustLevelToNextNode().get(i);
                     RelationshipNode nextOtherNode = otherNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, nextOtherNode, i);
-                    nextThisNode.and(nextOtherNode);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, nextOtherNode, i);
+                    nextThisNode.and(newNode);
                 }
             }
             else if (thisNodeOrder < otherNodeOrder) {
                 nextRootNode = this;
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextThisNode =  nextRootNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, otherNode, i);
-                    nextThisNode.and(otherNode);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, otherNode, i);
+                    nextThisNode.and(newNode);
                 }
             }
             else {
@@ -217,8 +215,8 @@ public class RelationshipNode{
                 nextRootNode = otherNode;
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextOtherNode =  nextRootNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, this, i);
-                    nextOtherNode.and(this);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, this, i);
+                    nextOtherNode.and(newNode);
                 }
             }
         }
@@ -270,16 +268,16 @@ public class RelationshipNode{
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextThisNode =  nextRootNode.getTrustLevelToNextNode().get(i);
                     RelationshipNode nextOtherNode = otherNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, nextOtherNode, i);
-                    nextThisNode.or(nextOtherNode);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, nextOtherNode, i);
+                    nextThisNode.or(newNode);
                 }
             }
             else if (thisNodeOrder < otherNodeOrder) {
                 nextRootNode = this;
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextThisNode =  nextRootNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, otherNode, i);
-                    nextThisNode.or(otherNode);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, otherNode, i);
+                    nextThisNode.or(newNode);
                 }
             }
             else {
@@ -287,8 +285,8 @@ public class RelationshipNode{
                 nextRootNode = otherNode;
                 for (int i = 0; i < numberOfTrustLevel; i++) {
                     RelationshipNode nextOtherNode =  nextRootNode.getTrustLevelToNextNode().get(i);
-                    changeChildNodeIfOrderIsLarger(nextRootNode, this, i);
-                    nextOtherNode.or(this);
+                    RelationshipNode newNode = changeChildNodeIfOrderIsLarger(nextRootNode, this, i);
+                    nextOtherNode.or(newNode);
                 }
             }
         }
@@ -302,14 +300,19 @@ public class RelationshipNode{
      * @param newRootNode This parent node for the next step
      * @param nextOtherNode The next other node to be applied and operation with next this node
      * @param trustLevel The trust level leads to the next this node
+     * @return Node for next other node. If the parent change the pointer, we need to create a new one.
      */
-    private void changeChildNodeIfOrderIsLarger(RelationshipNode newRootNode, RelationshipNode nextOtherNode, int trustLevel) {
+    private RelationshipNode changeChildNodeIfOrderIsLarger(RelationshipNode newRootNode, RelationshipNode nextOtherNode, int trustLevel) {
         RelationshipNode nextThisNode = newRootNode.getTrustLevelToNextNode().get(trustLevel);
         if (!nextThisNode.isLast() && !nextOtherNode.isLast()
                 && nextOtherNode.getRelationship().getOrder() < nextThisNode.getRelationship().getOrder()) {
-            newRootNode.getTrustLevelToNextNode().replace(trustLevel, nextOtherNode);
-            nextOtherNode.setParent(newRootNode);
+            RelationshipNode relationshipNode = new RelationshipNode(1);
+            nextOtherNode.copyTo(relationshipNode);
+            newRootNode.getTrustLevelToNextNode().replace(trustLevel, relationshipNode);
+            relationshipNode.setParent(newRootNode);
+            return relationshipNode;
         }
+        return nextOtherNode;
     }
     
     @Override
@@ -328,7 +331,7 @@ public class RelationshipNode{
         return Objects.hash(trustLevelToNextNode, value, relationship);
     }
     
-    Map<Integer, RelationshipNode> getTrustLevelToNextNode() {
+    public Map<Integer, RelationshipNode> getTrustLevelToNextNode() {
         return trustLevelToNextNode;
     }
 }

@@ -20,7 +20,7 @@ public class MDDCreationTest {
     private int indexOfCraig = 2;
     private int indexOfMike = 3;
     private MDDCreation mddCreation;
-    private Relationship[][] socialNetworkGraph;
+    private List<List<Relationship>> socialNetwork;
     private Relationship relationshipFromGreyToRoy = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfGrey, indexOfRoy);
 
     private Relationship relationshipFromRoyToGrey = new Relationship(CommonTestConstant.NUMBER_OF_TRUST_LEVEL, indexOfRoy, indexOfGrey);
@@ -38,7 +38,12 @@ public class MDDCreationTest {
     //Initialize the 3 layer trust level social network graph.
     @Before
     public void initializeMDDCreation() {
-        socialNetworkGraph = new Relationship[4][4];
+        socialNetwork = new ArrayList<>(4);
+        socialNetwork.add(new ArrayList<>());
+        socialNetwork.add(new ArrayList<>());
+        socialNetwork.add(new ArrayList<>());
+        socialNetwork.add(new ArrayList<>());
+
         relationshipFromGreyToRoy.setTrustProbability(0.3, 0);
         relationshipFromGreyToRoy.setTrustProbability(0.5, 1);
         relationshipFromGreyToRoy.setTrustProbability(0.2, 2);
@@ -67,25 +72,24 @@ public class MDDCreationTest {
         relationshipFromMikeToRoy.setTrustProbability(0.8, 1);
         relationshipFromMikeToRoy.setTrustProbability(0.1, 2);
 
-        socialNetworkGraph[indexOfRoy][indexOfRoy]= null;
-        socialNetworkGraph[indexOfCraig][indexOfCraig]= null;
-        socialNetworkGraph[indexOfGrey][indexOfGrey]= null;
-        socialNetworkGraph[indexOfMike][indexOfMike]= null;
-        socialNetworkGraph[indexOfMike][indexOfCraig]= null;
-        socialNetworkGraph[indexOfMike][indexOfGrey]= null;
-        socialNetworkGraph[indexOfGrey][indexOfMike]= null;
-        socialNetworkGraph[indexOfCraig][indexOfGrey]= null;
-        socialNetworkGraph[indexOfRoy][indexOfCraig]= null;
+        //Have to keep the order of adding to make the ordering deterministic
+        socialNetwork.get(indexOfGrey).add(relationshipFromGreyToRoy);
+        socialNetwork.get(indexOfGrey).add(relationshipFromGreyToCraig);
+        socialNetwork.get(indexOfCraig).add(relationshipFromCraigToRoy);
+        socialNetwork.get(indexOfCraig).add(relationshipFromCraigToMike);
+        socialNetwork.get(indexOfMike).add(relationshipFromMikeToRoy);
+        socialNetwork.get(indexOfRoy).add(relationshipFromRoyToGrey);
+        socialNetwork.get(indexOfRoy).add(relationshipFromRoyToMike);
 
-        socialNetworkGraph[indexOfMike][indexOfRoy]= relationshipFromMikeToRoy;
-        socialNetworkGraph[indexOfRoy][indexOfGrey] = relationshipFromRoyToGrey;
-        socialNetworkGraph[indexOfGrey][indexOfRoy] = relationshipFromGreyToRoy;
-        socialNetworkGraph[indexOfGrey][indexOfCraig] = relationshipFromGreyToCraig;
-        socialNetworkGraph[indexOfCraig][indexOfRoy] = relationshipFromCraigToRoy;
-        socialNetworkGraph[indexOfCraig][indexOfMike] = relationshipFromCraigToMike;
-        socialNetworkGraph[indexOfRoy][indexOfMike] = relationshipFromRoyToMike;
 
-        mddCreation = new MDDCreation(socialNetworkGraph);
+        mddCreation = new MDDCreation(socialNetwork);
+        Map<Long, Integer> map = new HashMap<>();
+        map.put((long)0, 0);
+        map.put((long)1, 1);
+        map.put((long)2, 2);
+        map.put((long)3, 3);
+        mddCreation.setPersonIdToGraphIndex(map);
+
     }
 
 
@@ -94,15 +98,21 @@ public class MDDCreationTest {
     @Test
     public void shouldOrderOfMDDBeSetCorrectlyWhenFindingPathFromRoyToCraig() {
         mddCreation.orderRelationship(indexOfGrey, indexOfMike);
-        Relationship[][] relationships = mddCreation.getSocialNetworkGraph();
-        System.out.println(Integer.MAX_VALUE);
-        assertEquals(NO_ORDERED, relationships[indexOfMike][indexOfRoy].getOrder());
-        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfGrey].getOrder());
-        assertEquals(1, relationships[indexOfGrey][indexOfRoy].getOrder());
-        assertEquals(3, relationships[indexOfGrey][indexOfCraig].getOrder());
-        assertEquals(4, relationships[indexOfCraig][indexOfRoy].getOrder());
-        assertEquals(5, relationships[indexOfCraig][indexOfMike].getOrder());
-        assertEquals(2, relationships[indexOfRoy][indexOfMike].getOrder());
+        List<List<Relationship>> relationships = mddCreation.getSocialNetwork();
+        //To Roy
+        assertEquals(NO_ORDERED, relationships.get(indexOfMike).get(0).getOrder());
+        //To Grey
+        assertEquals(NO_ORDERED, relationships.get(indexOfRoy).get(0).getOrder());
+        //To Roy
+        assertEquals(1, relationships.get(indexOfGrey).get(0).getOrder());
+        //To Craig
+        assertEquals(3, relationships.get(indexOfGrey).get(1).getOrder());
+        //To Roy
+        assertEquals(4, relationships.get(indexOfCraig).get(0).getOrder());
+        //To Mike
+        assertEquals(5, relationships.get(indexOfCraig).get(1).getOrder());
+        //To Mike
+        assertEquals(2, relationships.get(indexOfRoy).get(1).getOrder());
     }
 
     //Construct the order from the source node Grey to Roy. The path should be build from smaller index
@@ -110,15 +120,22 @@ public class MDDCreationTest {
     @Test
     public void shouldOrderOfMDDBeSetCorrectlyWhenFindingPathFromGreyToRoy() {
         mddCreation.orderRelationship(indexOfGrey, indexOfRoy);
-        Relationship[][] relationships = mddCreation.getSocialNetworkGraph();
+        List<List<Relationship>> relationships = mddCreation.getSocialNetwork();
+        //To Roy
+        assertEquals(5, relationships.get(indexOfMike).get(0).getOrder());
+        //To Grey
+        assertEquals(NO_ORDERED, relationships.get(indexOfRoy).get(0).getOrder());
+        //To Roy
+        assertEquals(1, relationships.get(indexOfGrey).get(0).getOrder());
+        //To Craig
+        assertEquals(2, relationships.get(indexOfGrey).get(1).getOrder());
+        //To Roy
+        assertEquals(3, relationships.get(indexOfCraig).get(0).getOrder());
+        //To Mike
+        assertEquals(4, relationships.get(indexOfCraig).get(1).getOrder());
+        //To Mike
+        assertEquals(NO_ORDERED, relationships.get(indexOfRoy).get(1).getOrder());
 
-        assertEquals(5, relationships[indexOfMike][indexOfRoy].getOrder());
-        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfGrey].getOrder());
-        assertEquals(1, relationships[indexOfGrey][indexOfRoy].getOrder());
-        assertEquals(2, relationships[indexOfGrey][indexOfCraig].getOrder());
-        assertEquals(3, relationships[indexOfCraig][indexOfRoy].getOrder());
-        assertEquals(4, relationships[indexOfCraig][indexOfMike].getOrder());
-        assertEquals(NO_ORDERED, relationships[indexOfRoy][indexOfMike].getOrder());
     }
 
     //To create a mdd from path from gery to roy at level 1.
@@ -289,9 +306,16 @@ public class MDDCreationTest {
 
     @Test
     public void shouldCreateMDDForGregToMikeAtTrustLevel0Correctly() {
-        //Disable this path to comply with the thesis
-        socialNetworkGraph[indexOfCraig][indexOfMike] = null;
-        MDDCreation mddCreation = new MDDCreation(socialNetworkGraph);
+        // Delete the trust relation from craig to mike
+        // Disable this path to comply with the thesis
+        socialNetwork.get(indexOfCraig).remove(1);
+        MDDCreation mddCreation = new MDDCreation(socialNetwork);
+        Map<Long, Integer> map = new HashMap<>();
+        map.put((long)0, 0);
+        map.put((long)1, 1);
+        map.put((long)2, 2);
+        map.put((long)3, 3);
+        mddCreation.setPersonIdToGraphIndex(map);
         MDD mdd = mddCreation.createMDD(indexOfGrey, indexOfMike, 0);
         //Create mdd with same structure to verify
         RelationshipNode order1 = new RelationshipNode(relationshipFromGreyToRoy);
@@ -339,9 +363,16 @@ public class MDDCreationTest {
 
     @Test
     public void shouldCreateMDDForGregToMikeAtTrustLevel1Correctly() {
-        //Disable this path to comply with the thesis
-        socialNetworkGraph[indexOfCraig][indexOfMike] = null;
-        MDDCreation mddCreation = new MDDCreation(socialNetworkGraph);
+        // Delete the trust relation from craig to mike
+        // Disable this path to comply with the thesis
+        socialNetwork.get(indexOfCraig).remove(1);
+        MDDCreation mddCreation = new MDDCreation(socialNetwork);
+        Map<Long, Integer> map = new HashMap<>();
+        map.put((long)0, 0);
+        map.put((long)1, 1);
+        map.put((long)2, 2);
+        map.put((long)3, 3);
+        mddCreation.setPersonIdToGraphIndex(map);
         MDD mdd = mddCreation.createMDD(indexOfGrey, indexOfMike, 1);
         //Create mdd with same structure to verify
         RelationshipNode order1 = new RelationshipNode(relationshipFromGreyToRoy);
@@ -397,9 +428,16 @@ public class MDDCreationTest {
 
     @Test
     public void shouldCreateMDDForGregToMikeAtTrustLevel2Correctly() {
-        //Disable this path to comply with the thesis
-        socialNetworkGraph[indexOfCraig][indexOfMike] = null;
-        MDDCreation mddCreation = new MDDCreation(socialNetworkGraph);
+        // Delete the trust relation from craig to mike
+        // Disable this path to comply with the thesis
+        socialNetwork.get(indexOfCraig).remove(1);
+        MDDCreation mddCreation = new MDDCreation(socialNetwork);
+        Map<Long, Integer> map = new HashMap<>();
+        map.put((long)0, 0);
+        map.put((long)1, 1);
+        map.put((long)2, 2);
+        map.put((long)3, 3);
+        mddCreation.setPersonIdToGraphIndex(map);
         MDD mdd = mddCreation.createMDD(indexOfGrey, indexOfMike, 2);
         //Create mdd with same structure to verify
         RelationshipNode order1 = new RelationshipNode(relationshipFromGreyToRoy);

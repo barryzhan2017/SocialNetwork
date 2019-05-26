@@ -7,6 +7,8 @@ import com.google.common.collect.HashBiMap;
 
 import java.util.*;
 
+import static com.mdd.common.CommonConstant.NONE_SINK_NODE;
+
 public class MDDReduction {
 
     private int numberOfTrustLevel;
@@ -16,7 +18,7 @@ public class MDDReduction {
     }
 
     void reduce(MDD mdd) {
-        if (mdd == null || mdd.getRootNode() == null || mdd.getRootNode().getValue() != -1)
+        if (mdd == null || mdd.getRootNode() == null || mdd.getRootNode().getValue() != NONE_SINK_NODE)
             throw new IllegalArgumentException("MDD is null or its root node is null or a sink node!");
         List<List<RelationshipNode>> relationshipNodeInEachOrder = new ArrayList<>();
         Queue<RelationshipNode> queue = new LinkedList<>();
@@ -49,9 +51,8 @@ public class MDDReduction {
                 childNode.getParent().replaceNextNode(childNode.getTrustLevelFromParentToThis(),
                         existingNodes.inverse().get(value));
             }
-            else {
+            else
                 existingNodes.put(childNode, new Object());
-            }
         }
     }
 
@@ -97,11 +98,9 @@ public class MDDReduction {
         //Don't add any sink nodes into the list.
         if (rootNode.getValue() == 0) {
             rootNode.getParent().replaceNextNode(rootNode.getTrustLevelFromParentToThis(), sinkNode0);
-            levelOrderTraversal(queue, relationshipNodeInEachOrder, sinkNode0, sinkNode1);
         }
         else if (rootNode.getValue() == 1) {
             rootNode.getParent().replaceNextNode(rootNode.getTrustLevelFromParentToThis(), sinkNode1);
-            levelOrderTraversal(queue, relationshipNodeInEachOrder, sinkNode0, sinkNode1);
         }
         else {
             int order = rootNode.getRelationship().getOrder();
@@ -114,7 +113,7 @@ public class MDDReduction {
             for (int i = 0; i < this.numberOfTrustLevel; i++) {
                 queue.offer(rootNode.getNextNode(i));
             }
-            levelOrderTraversal(queue, relationshipNodeInEachOrder, sinkNode0, sinkNode1);
         }
+        levelOrderTraversal(queue, relationshipNodeInEachOrder, sinkNode0, sinkNode1);
     }
 }

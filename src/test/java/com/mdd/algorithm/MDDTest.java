@@ -4,8 +4,7 @@ import org.junit.Test;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import static com.mdd.common.CommonTestConstant.checkParents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 
 public class MDDTest {
@@ -232,12 +231,12 @@ public class MDDTest {
 
     //The and or or operation should return null if the other mdd is null.
     @Test
-    public void shouldReturnNullWhenOtherMDDIsNull() {
+    public void shouldReturnThisMDDWhenOtherMDDIsNull() {
         Relationship relationship = new Relationship(2, 0, 1, new double[]{0.1, 0.9});
         RelationshipNode relationshipNode = new RelationshipNode(relationship);
         MDD mdd = new MDD(relationshipNode);
-        assertNull(mdd.and(null));
-        assertNull(mdd.or(null));
+        assertSame(mdd, mdd.and(null));
+        assertSame(mdd, mdd.or(null));
     }
 
     @Test(expected = NullPointerException.class)

@@ -9,7 +9,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 public class MDDReductionTest {
 
@@ -31,9 +31,9 @@ public class MDDReductionTest {
         assertEquals(1,  relationshipNodeForEachOrder.size());
         assertEquals(1,  relationshipNodeForEachOrder.get(0).size());
         assertEquals(rootNode, relationshipNodeForEachOrder.get(0).get(0));
-        assertTrue(relationshipNodeForEachOrder.get(0).get(0).getNextNode(0) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(0).get(0).getNextNode(1) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(0).get(0).getNextNode(2) == commonSinkNode1);
+        assertSame(relationshipNodeForEachOrder.get(0).get(0).getNextNode(0), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(0).get(0).getNextNode(1), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(0).get(0).getNextNode(2), commonSinkNode1);
     }
 
     //Root node is order 1. Two child nodes are order 2 and the other is order 4.
@@ -85,20 +85,20 @@ public class MDDReductionTest {
         assertEquals(2,  relationshipNodeForEachOrder.get(1).size());
         assertEquals(relationshipNode2, relationshipNodeForEachOrder.get(1).get(0));
         assertEquals(otherRelationshipNode2, relationshipNodeForEachOrder.get(1).get(1));
-        assertTrue(relationshipNodeForEachOrder.get(1).get(0).getNextNode(0) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(1).get(0).getNextNode(1) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(1).get(0).getNextNode(2) == commonSinkNode1);
-        assertTrue(relationshipNodeForEachOrder.get(1).get(1).getNextNode(0) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(1).get(1).getNextNode(1) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(1).get(1).getNextNode(2) == commonSinkNode1);
+        assertSame(relationshipNodeForEachOrder.get(1).get(0).getNextNode(0), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(1).get(0).getNextNode(1), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(1).get(0).getNextNode(2), commonSinkNode1);
+        assertSame(relationshipNodeForEachOrder.get(1).get(1).getNextNode(0), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(1).get(1).getNextNode(1), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(1).get(1).getNextNode(2), commonSinkNode1);
 
         assertEquals(0,  relationshipNodeForEachOrder.get(2).size());
 
         assertEquals(1,  relationshipNodeForEachOrder.get(3).size());
         assertEquals(relationshipNode3, relationshipNodeForEachOrder.get(3).get(0));
-        assertTrue(relationshipNodeForEachOrder.get(3).get(0).getNextNode(0) == commonSinkNode0);
-        assertTrue(relationshipNodeForEachOrder.get(3).get(0).getNextNode(1) == commonSinkNode1);
-        assertTrue(relationshipNodeForEachOrder.get(3).get(0).getNextNode(2) == commonSinkNode1);
+        assertSame(relationshipNodeForEachOrder.get(3).get(0).getNextNode(0), commonSinkNode0);
+        assertSame(relationshipNodeForEachOrder.get(3).get(0).getNextNode(1), commonSinkNode1);
+        assertSame(relationshipNodeForEachOrder.get(3).get(0).getNextNode(2), commonSinkNode1);
     }
 
     //For a list of different nodes in order 2, check if they remain as before after applying mergeIsomorphic method
@@ -130,9 +130,9 @@ public class MDDReductionTest {
         List<RelationshipNode> childNodes = Arrays.asList(child1, child2, child3);
         MDDReduction mddReduction = new MDDReduction(3);
         mddReduction.mergeIsomorphicChildNodes(childNodes, HashBiMap.create(3));
-        assertTrue(parent.getNextNode(0) == child1);
-        assertTrue(parent.getNextNode(1) == child2);
-        assertTrue(parent.getNextNode(2) == child3);
+        assertSame(parent.getNextNode(0), child1);
+        assertSame(parent.getNextNode(1), child2);
+        assertSame(parent.getNextNode(2), child3);
     }
 
     //For a list of 2 same nodes in order 2, check if they merge after applying mergeIsomorphic method
@@ -164,9 +164,9 @@ public class MDDReductionTest {
         List<RelationshipNode> childNodes = Arrays.asList(child1, child2, child3);
         MDDReduction mddReduction = new MDDReduction(3);
         mddReduction.mergeIsomorphicChildNodes(childNodes, HashBiMap.create(3));
-        assertTrue(parent.getNextNode(0) == child1);
-        assertTrue(parent.getNextNode(1) == child2);
-        assertTrue(parent.getNextNode(2) == child1);
+        assertSame(parent.getNextNode(0), child1);
+        assertSame(parent.getNextNode(1), child2);
+        assertSame(parent.getNextNode(2), child1);
     }
 
     //For a list of 3 same nodes in order 2, check if they merge after applying mergeIsomorphic method
@@ -198,9 +198,9 @@ public class MDDReductionTest {
         List<RelationshipNode> childNodes = Arrays.asList(child1, child2, child3);
         MDDReduction mddReduction = new MDDReduction(3);
         mddReduction.mergeIsomorphicChildNodes(childNodes, HashBiMap.create(3));
-        assertTrue(parent.getNextNode(0) == child1);
-        assertTrue(parent.getNextNode(1) == child1);
-        assertTrue(parent.getNextNode(2) == child1);
+        assertSame(parent.getNextNode(0), child1);
+        assertSame(parent.getNextNode(1), child1);
+        assertSame(parent.getNextNode(2), child1);
     }
 
     @Test
@@ -215,9 +215,9 @@ public class MDDReductionTest {
         parent.putNextNode(2, sinkNode30);
         MDDReduction mddReduction = new MDDReduction(3);
         mddReduction.applyShannonReductionToChildrenNodes(Arrays.asList(parent));
-        assertTrue(parent.getNextNode(0) == sinkNode10);
-        assertTrue(parent.getNextNode(1) == sinkNode20);
-        assertTrue(parent.getNextNode(2) == sinkNode30);
+        assertSame(parent.getNextNode(0), sinkNode10);
+        assertSame(parent.getNextNode(1), sinkNode20);
+        assertSame(parent.getNextNode(2), sinkNode30);
         assertNull(sinkNode10.getTrustLevelToNextNode());
         assertNull(sinkNode20.getTrustLevelToNextNode());
         assertNull(sinkNode30.getTrustLevelToNextNode());
@@ -247,9 +247,9 @@ public class MDDReductionTest {
         parent.putNextNode(2, grandchild1);
         MDDReduction mddReduction = new MDDReduction(3);
         mddReduction.applyShannonReductionToChildrenNodes(Arrays.asList(parent));
-        assertTrue(parent.getNextNode(0) == grandchild1);
-        assertTrue(parent.getNextNode(1) == grandchild1);
-        assertTrue(parent.getNextNode(2) == grandchild1);
+        assertSame(parent.getNextNode(0), grandchild1);
+        assertSame(parent.getNextNode(1), grandchild1);
+        assertSame(parent.getNextNode(2), grandchild1);
     }
 
     @Test
@@ -282,13 +282,13 @@ public class MDDReductionTest {
         RelationshipNode sinkNode0 = rootNode.getNextNode(0);
         RelationshipNode sinkNode1 = rootNode.getNextNode(1).getNextNode(1);
         assertEquals(copiedRootNode, rootNode);
-        assertTrue(rootNode.getNextNode(0) == sinkNode0);
-        assertTrue(rootNode.getNextNode(1).getNextNode(0) == sinkNode0);
-        assertTrue(rootNode.getNextNode(1).getNextNode(1) == sinkNode1);
-        assertTrue(rootNode.getNextNode(1).getNextNode(2) == sinkNode1);
-        assertTrue(rootNode.getNextNode(2).getNextNode(0) == sinkNode0);
-        assertTrue(rootNode.getNextNode(2).getNextNode(1) == sinkNode1);
-        assertTrue(rootNode.getNextNode(2).getNextNode(2) == sinkNode0);
+        assertSame(rootNode.getNextNode(0), sinkNode0);
+        assertSame(rootNode.getNextNode(1).getNextNode(0), sinkNode0);
+        assertSame(rootNode.getNextNode(1).getNextNode(1), sinkNode1);
+        assertSame(rootNode.getNextNode(1).getNextNode(2), sinkNode1);
+        assertSame(rootNode.getNextNode(2).getNextNode(0), sinkNode0);
+        assertSame(rootNode.getNextNode(2).getNextNode(1), sinkNode1);
+        assertSame(rootNode.getNextNode(2).getNextNode(2), sinkNode0);
     }
 
     @Test
@@ -329,9 +329,9 @@ public class MDDReductionTest {
         //Assert the structure is the same
         assertEquals(rootNode, copiedRootNode);
         //Assert the merged nodes are the same
-        assertTrue(d1 == rootNode.getNextNode(1).getNextNode(0).getNextNode(0));
-        assertTrue(d1.getNextNode(1) == c.getNextNode(1));
-        assertTrue(d1.getNextNode(1) == b.getNextNode(1));
+        assertSame(d1, rootNode.getNextNode(1).getNextNode(0).getNextNode(0));
+        assertSame(d1.getNextNode(1), c.getNextNode(1));
+        assertSame(d1.getNextNode(1), b.getNextNode(1));
     }
 
     //This time, the root node should be reduced because it links two same child nodes.
@@ -388,9 +388,9 @@ public class MDDReductionTest {
         RelationshipNode nodeD = rootNode.getNextNode(0);
         RelationshipNode nodeE = nodeD.getNextNode(0);
         RelationshipNode nodeF = nodeE.getNextNode(0);
-        assertTrue(rootNode.getNextNode(1) == nodeD.getNextNode(1));
-        assertTrue(rootNode.getNextNode(1) == nodeE.getNextNode(1));
-        assertTrue(rootNode.getNextNode(1) == nodeF.getNextNode(1));
+        assertSame(rootNode.getNextNode(1), nodeD.getNextNode(1));
+        assertSame(rootNode.getNextNode(1), nodeE.getNextNode(1));
+        assertSame(rootNode.getNextNode(1), nodeF.getNextNode(1));
     }
 
 }

@@ -1,5 +1,7 @@
 package com.mdd.algorithm;
 
+import com.mdd.entity.RelationNode;
+
 import java.util.Objects;
 
 import static com.mdd.common.CommonConstant.NO_ORDERED;
@@ -7,17 +9,15 @@ import static com.mdd.common.CommonConstant.NO_ORDERED;
 public class MDD {
 
     private RelationshipNode rootNode = null;
-    private int order = NO_ORDERED;
 
     MDD (RelationshipNode rootNode) {
         if (rootNode == null) {
             throw new NullPointerException("Initialize the mdd with null pointer as the root node!");
         }
         this.rootNode = rootNode;
-        order = this.rootNode.getRelationship().getOrder();
     }
 
-    public void setRootNode(RelationshipNode rootNode) {
+    void setRootNode(RelationshipNode rootNode) {
         this.rootNode = rootNode;
     }
 
@@ -28,19 +28,7 @@ public class MDD {
      * @return The mdd combined with the other one with the and operation or null if the other mdd is null
      */
     public MDD and(MDD otherMDD) {
-        if (otherMDD == null || rootNode == null) {
-            return null;
-        }
-        MDD mddAfterAndOperation;
-        int otherMDDOrder = otherMDD.getOrder();
-        if (otherMDDOrder >= order) {
-            mddAfterAndOperation = new MDD(rootNode);
-        }
-        else {
-            mddAfterAndOperation = new MDD(otherMDD.getRootNode());
-        }
-        rootNode.and(otherMDD.getRootNode());
-        return mddAfterAndOperation;
+        return operate(otherMDD, true);
     }
 
     /**
@@ -48,23 +36,30 @@ public class MDD {
      * @param otherMDD The target mdd to or with
      * @return The mdd combined with the other one with the or operation or null if the other mdd is null
      */
-    public MDD or(MDD otherMDD) {
-        if (otherMDD == null || rootNode == null) {
-            return null;
-        }
-        MDD mddAfterAndOperation;
-        int otherMDDOrder = otherMDD.getOrder();
-        if (otherMDDOrder >= order) {
-            mddAfterAndOperation = new MDD(rootNode);
-            rootNode.or(otherMDD.getRootNode());
-        }
-        else {
-            mddAfterAndOperation = new MDD(otherMDD.getRootNode());
-            otherMDD.getRootNode().or(rootNode);
-        }
-        return mddAfterAndOperation;
+    MDD or(MDD otherMDD) {
+        return operate(otherMDD, false);
     }
 
+    private MDD operate(MDD otherMDD, boolean isAnd) {
+        if (otherMDD == null)
+            return this;
+        MDD mddAfterAndOperation;
+        int otherMDDOrder = otherMDD.getOrder();
+        RelationshipNode relationshipNode = new RelationshipNode(-1);
+        rootNode.copyTo(relationshipNode);
+        RelationshipNode otherRelationshipNode = new RelationshipNode(-1);
+        otherMDD.getRootNode().copyTo(otherRelationshipNode);
+        if (otherMDDOrder >= getOrder())
+            mddAfterAndOperation = new MDD(relationshipNode);
+        else
+            mddAfterAndOperation = new MDD(otherRelationshipNode);
+        if (isAnd)
+            relationshipNode.and(otherRelationshipNode);
+        else
+            relationshipNode.or(otherRelationshipNode);
+        return mddAfterAndOperation;
+
+    }
 
     public RelationshipNode getRootNode() {
         return rootNode;
@@ -72,7 +67,7 @@ public class MDD {
 
 
     private int getOrder() {
-        return order;
+        return getRootNode().getRelationship().getOrder();
     }
 
     @Override

@@ -2,13 +2,12 @@ package com.mdd.entity;
 
 import org.neo4j.ogm.annotation.*;
 
-import java.util.Date;
-
-@RelationshipEntity(type = "TRUST")
+@RelationshipEntity(type = "Trust")
 public class TrustRelation  {
 
 
-    @GraphId
+    @Id
+    @GeneratedValue
     private Long id;
 
     @StartNode
@@ -18,20 +17,10 @@ public class TrustRelation  {
     private Person target;
 
     @Property
-    private String relationName = "trust";
-
-    @Property
-    private Long added = new Date().getTime();
-
-    @Property
     private int trustIndex;
 
     @Property
     private double probability;
-
-    public void setRelationName(String relationName) {
-        this.relationName = relationName;
-    }
 
     public int getTrustIndex() {
         return trustIndex;
@@ -54,7 +43,7 @@ public class TrustRelation  {
     }
 
     public TrustRelation(Person source, Person target, int trustIndex
-    , double probability) {
+            , double probability) {
         this.source = source;
         this.target = target;
         this.trustIndex = trustIndex;
@@ -90,25 +79,5 @@ public class TrustRelation  {
     public void setTarget(Person target) {
         this.target = target;
     }
-
-
-    public Long getAdded() {
-        return added;
-    }
-
-
-    public void setAdded(Long added) {
-        this.added = added;
-    }
-
-
-    public String getRelationName() {
-        return relationName;
-    }
-
-
-
-
-
 
 }
