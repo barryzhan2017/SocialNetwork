@@ -18,12 +18,24 @@ public class Edge {
     @Property
     private double probability;
 
+    @Property
+    private int index;
+
     public Edge() {}
 
-    public Edge(RelationNode source, RelationNode target, double probability) {
+    public Edge(RelationNode source, RelationNode target, double probability, int index) {
         this.source = source;
         this.target = target;
         this.probability = probability;
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public Long getId() {

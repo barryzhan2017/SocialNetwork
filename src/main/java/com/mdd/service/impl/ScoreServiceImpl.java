@@ -61,6 +61,7 @@ public class ScoreServiceImpl implements ScoreService {
             if (mdd == null) return NO_AVAILABLE_RATING_NOW;
             MDDEvaluation mddEvaluation = new MDDEvaluation();
             double probability = mddEvaluation.getProbability(mdd);
+
             Map<RelationshipNode, RelationNode> map = new HashMap<>();
             RelationNode relationNode = new RelationNode(mdd.getRootNode(), map);
             Score newScore = new Score(sourceId, targetId, probability, trustLevel, relationNode);

@@ -27,12 +27,16 @@ public class RelationNode {
     @Property
     private int value;
 
+    @Property
+    private int order;
+
     public RelationNode() {}
-    public RelationNode(Long sourceId, Long targetId, List<Edge> edges, int value) {
+    public RelationNode(Long sourceId, Long targetId, List<Edge> edges, int value, int order) {
         this.sourceId = sourceId;
         this.targetId = targetId;
         this.edges = edges;
         this.value = value;
+        this.order = order;
     }
 
     //Recursively initialize the relation node by relationship node
@@ -46,13 +50,14 @@ public class RelationNode {
             targetId = relationship.getEndNode();
             double[] trustProbability = relationship.getTrustProbability();
             edges = new ArrayList<>();
+            order = relationship.getOrder();
             int i = 0;
             for (RelationshipNode relationshipNode : rootNode.getTrustLevelToNextNode().values()) {
                 //Check for duplicate nodes, if so just add the existing relation node
                 // Don't use get or default because it will replace the value node in the map by calling new.
                 RelationNode relationNode = map.get(relationshipNode);
                 if (relationNode == null) relationNode = new RelationNode(relationshipNode, map);
-                edges.add(new Edge(this, relationNode, trustProbability[i++]));
+                edges.add(new Edge(this, relationNode, trustProbability[i], i++));
             }
         }
     }
@@ -95,5 +100,13 @@ public class RelationNode {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

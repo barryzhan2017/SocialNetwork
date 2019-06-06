@@ -1,5 +1,8 @@
 package com.mdd.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommonConstant {
     private CommonConstant() {}
     public static final int NO_ORDERED = -1;

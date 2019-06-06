@@ -3,6 +3,7 @@ package com.mdd.algorithm;
 import com.mdd.common.CommonTestConstant;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.mdd.common.CommonConstant.NO_ROOT_NODE;
@@ -212,7 +213,6 @@ public class MDDEvaluationTest {
         socialNetwork.get(indexOfGrey).add(relationshipFromGreyToCraig);
         socialNetwork.get(indexOfCraig).add(relationshipFromCraigToRoy);
         socialNetwork.get(indexOfRoy).add(relationshipFromRoyToMike);
-
         MDDCreation mddCreation = new MDDCreation(socialNetwork);
         Map<Long, Integer> map = new HashMap<>();
         map.put((long)0, 0);

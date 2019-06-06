@@ -42,85 +42,85 @@ public class InitializeMDDCreationTest {
         trustRelationDao.deleteAll();
 
 
-//        Person grey = new Person("Grey");
-//        Person roy = new Person("Roy");
-//        Person craig = new Person("Craig");
-//        Person mike = new Person("Mike");
-//
-//
-//        TrustRelation trustRelation1 = new TrustRelation(grey, roy, 1, 0.5);
-//        TrustRelation trustRelation2 = new TrustRelation(grey, roy, 2, 0.4);
-//        TrustRelation trustRelation3 = new TrustRelation(grey, roy, 0, 0.1);
-//        TrustRelation trustRelation4 = new TrustRelation(roy, grey, 2, 1);
-//        TrustRelation trustRelation5 = new TrustRelation(roy, grey, 1, 0);
-//        TrustRelation trustRelation6 = new TrustRelation(roy, grey, 0, 0);
-//        TrustRelation trustRelation7 = new TrustRelation(grey, craig, 1, 0.6);
-//        TrustRelation trustRelation8 = new TrustRelation(grey, craig, 0, 0);
-//        TrustRelation trustRelation9 = new TrustRelation(grey, craig, 2, 0.4);
-//        TrustRelation trustRelation10 = new TrustRelation(craig, roy, 2, 1);
-//        TrustRelation trustRelation11 = new TrustRelation(craig, roy, 1, 0);
-//        TrustRelation trustRelation12 = new TrustRelation(craig, roy, 0, 0);
-//        TrustRelation trustRelation13 = new TrustRelation(roy, mike, 2, 0.3);
-//        TrustRelation trustRelation14 = new TrustRelation(roy, mike, 1, 0.5);
-//        TrustRelation trustRelation15 = new TrustRelation(roy, mike, 0, 0.2);
-////        TrustRelation trustRelation16 = new TrustRelation(craig, mike, 2, 0.2);
-////        TrustRelation trustRelation17 = new TrustRelation(craig, mike, 1, 0.2);
-////        TrustRelation trustRelation18 = new TrustRelation(craig, mike, 0, 0.6);
-//        TrustRelation trustRelation19 = new TrustRelation(mike, roy, 2, 0.1);
-//        TrustRelation trustRelation20 = new TrustRelation(mike, roy, 1, 0.8);
-//        TrustRelation trustRelation21 = new TrustRelation(mike, roy, 0, 0.1);
-//
-//        grey.trust(trustRelation1);
-//        grey.trust(trustRelation2);
-//        grey.trust(trustRelation3);
-//        grey.trust(trustRelation7);
-//        grey.trust(trustRelation8);
-//        grey.trust(trustRelation9);
-//        roy.trust(trustRelation4);
-//        roy.trust(trustRelation5);
-//        roy.trust(trustRelation6);
-//        roy.trust(trustRelation13);
-//        roy.trust(trustRelation14);
-//        roy.trust(trustRelation15);
-//        craig.trust(trustRelation10);
-//        craig.trust(trustRelation11);
-//        craig.trust(trustRelation12);
-////        craig.trust(trustRelation16);
-////        craig.trust(trustRelation17);
-////        craig.trust(trustRelation18);
-//        mike.trust(trustRelation19);
-//        mike.trust(trustRelation20);
-//        mike.trust(trustRelation21);
-//
-//
-//
-//        personDao.save(grey);
-//        personDao.save(roy);
-//        personDao.save(craig);
-//        personDao.save(mike);
+        Person grey = new Person("Grey");
+        Person roy = new Person("Roy");
+        Person craig = new Person("Craig");
+        Person mike = new Person("Mike");
 
-        int numOfPeople = 2000;
-        int numOfRelationship = 10000;
-        List<Person> people = new ArrayList<>();
-        for(int i = 0; i < numOfPeople; i++)
-            people.add(new Person("Mike" + i));
-        Random random = new Random();
-        Set<String> set = new HashSet<>();
-        for (int i = 0; i < numOfRelationship; i++) {
-            int s = random.nextInt(numOfPeople);
-            int t = s;
-            while (t == s)
-                t = random.nextInt(numOfPeople);
-            if (!set.contains(s + "," + t)) {
-                set.add(s + "," + t);
-                Person person1 = people.get(s);
-                Person person2 = people.get(t);
-                person1.trust(new TrustRelation(person1, person2, 0, 0.2));
-                person1.trust(new TrustRelation(person1, person2, 1, 0.6));
-                person1.trust(new TrustRelation(person1, person2, 2, 0.2));
-            }
-        }
-        personDao.save(people, 1);
+
+        TrustRelation trustRelation1 = new TrustRelation(grey, roy, 1, 0.5);
+        TrustRelation trustRelation2 = new TrustRelation(grey, roy, 2, 0.4);
+        TrustRelation trustRelation3 = new TrustRelation(grey, roy, 0, 0.1);
+        TrustRelation trustRelation4 = new TrustRelation(roy, grey, 2, 1);
+        TrustRelation trustRelation5 = new TrustRelation(roy, grey, 1, 0);
+        TrustRelation trustRelation6 = new TrustRelation(roy, grey, 0, 0);
+        TrustRelation trustRelation7 = new TrustRelation(grey, craig, 1, 0.6);
+        TrustRelation trustRelation8 = new TrustRelation(grey, craig, 0, 0);
+        TrustRelation trustRelation9 = new TrustRelation(grey, craig, 2, 0.4);
+        TrustRelation trustRelation10 = new TrustRelation(craig, roy, 2, 1);
+        TrustRelation trustRelation11 = new TrustRelation(craig, roy, 1, 0);
+        TrustRelation trustRelation12 = new TrustRelation(craig, roy, 0, 0);
+        TrustRelation trustRelation13 = new TrustRelation(roy, mike, 2, 0.3);
+        TrustRelation trustRelation14 = new TrustRelation(roy, mike, 1, 0.5);
+        TrustRelation trustRelation15 = new TrustRelation(roy, mike, 0, 0.2);
+//        TrustRelation trustRelation16 = new TrustRelation(craig, mike, 2, 0.2);
+//        TrustRelation trustRelation17 = new TrustRelation(craig, mike, 1, 0.2);
+//        TrustRelation trustRelation18 = new TrustRelation(craig, mike, 0, 0.6);
+        TrustRelation trustRelation19 = new TrustRelation(mike, roy, 2, 0.1);
+        TrustRelation trustRelation20 = new TrustRelation(mike, roy, 1, 0.8);
+        TrustRelation trustRelation21 = new TrustRelation(mike, roy, 0, 0.1);
+
+        grey.trust(trustRelation1);
+        grey.trust(trustRelation2);
+        grey.trust(trustRelation3);
+        grey.trust(trustRelation7);
+        grey.trust(trustRelation8);
+        grey.trust(trustRelation9);
+        roy.trust(trustRelation4);
+        roy.trust(trustRelation5);
+        roy.trust(trustRelation6);
+        roy.trust(trustRelation13);
+        roy.trust(trustRelation14);
+        roy.trust(trustRelation15);
+        craig.trust(trustRelation10);
+        craig.trust(trustRelation11);
+        craig.trust(trustRelation12);
+//        craig.trust(trustRelation16);
+//        craig.trust(trustRelation17);
+//        craig.trust(trustRelation18);
+        mike.trust(trustRelation19);
+        mike.trust(trustRelation20);
+        mike.trust(trustRelation21);
+
+
+
+        personDao.save(grey);
+        personDao.save(roy);
+        personDao.save(craig);
+        personDao.save(mike);
+
+//        int numOfPeople = 2000;
+//        int numOfRelationship = 10000;
+//        List<Person> people = new ArrayList<>();
+//        for(int i = 0; i < numOfPeople; i++)
+//            people.add(new Person("Mike" + i));
+//        Random random = new Random();
+//        Set<String> set = new HashSet<>();
+//        for (int i = 0; i < numOfRelationship; i++) {
+//            int s = random.nextInt(numOfPeople);
+//            int t = s;
+//            while (t == s)
+//                t = random.nextInt(numOfPeople);
+//            if (!set.contains(s + "," + t)) {
+//                set.add(s + "," + t);
+//                Person person1 = people.get(s);
+//                Person person2 = people.get(t);
+//                person1.trust(new TrustRelation(person1, person2, 0, 0.2));
+//                person1.trust(new TrustRelation(person1, person2, 1, 0.6));
+//                person1.trust(new TrustRelation(person1, person2, 2, 0.2));
+//            }
+//        }
+//        personDao.save(people, 1);
     }
 
     @After

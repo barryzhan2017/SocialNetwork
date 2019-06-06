@@ -24,12 +24,12 @@ public class MDDEvaluation {
      * If the probability for specific trust level is 0, skip this sensitivity calculation.
      * Plus, the final number of trust level to divide should be always number of trust level - 1
      * @param mdd MDD model to analyze the importance of the given relationship
-     * @param startNode Start node of the relationship
-     * @param endNode End node of the relationship
+     * @param startNode Start node of the relationship id
+     * @param endNode End node of the relationship id
      * @return Sensitivity of the given relationship
      *
      */
-    public double getSensitivityOfNode(MDD mdd, int startNode, int endNode) {
+    public double getSensitivityOfNode(MDD mdd, long startNode, long endNode) {
         double probability = getProbability(mdd);
         if (probability == NO_ROOT_NODE) return NO_ROOT_NODE;
         double sensitivity = 0;
@@ -54,11 +54,11 @@ public class MDDEvaluation {
     /**
      * Get all the relationships given a start node and end node of that kind of relationship.
      * @param root Root node of the mdd
-     * @param startNode Target relationship's start node
-     * @param endNode Target relationship's end node
+     * @param startNode Target relationship's start node id
+     * @param endNode Target relationship's end node id
      * @return List of relationships corresponds to the target
      */
-    private List<Relationship> getAllSameRelationshipsFromMDD(RelationshipNode root, int startNode, int endNode) {
+    private List<Relationship> getAllSameRelationshipsFromMDD(RelationshipNode root, long startNode, long endNode) {
         List<Relationship> relationships = new ArrayList<>();
         dfs(root, startNode, endNode, relationships);
         return relationships;
@@ -67,11 +67,11 @@ public class MDDEvaluation {
     /**
      * Depth first search in the mdd to find all the target relationships
      * @param root Current mdd's root node
-     * @param startNode Target relationship's start node
-     * @param endNode Target relationship's end node
+     * @param startNode Target relationship's start node id
+     * @param endNode Target relationship's end node id
      * @param relationships List of relationships to store the target relationships
      */
-    private void dfs(RelationshipNode root, int startNode, int endNode, List<Relationship> relationships) {
+    private void dfs(RelationshipNode root, long startNode, long endNode, List<Relationship> relationships) {
         if (root.getValue() == NONE_SINK_NODE) {
             Relationship relationship = root.getRelationship();
             if (relationship.getStartNode() == startNode
